@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>محاكات قياس الذكاء</title>
+    <title>محاكي قياس الذكاء</title>
     <style>
         :root {
             --primary: #0F172A;
@@ -66,8 +66,10 @@
 
         button:hover { transform: scale(1.05); }
 
+        #intro-step { display: none; }
         .question-step { display: none; }
-        .active { display: block; }
+        
+        .active { display: block !important; }
 
         .options-grid {
             display: grid;
@@ -124,78 +126,4 @@
     <!-- النتيجة -->
     <div id="result-container">
         <span class="illustration">🎉</span>
-        <h2>نتيجتك التقديرية</h2>
-        <div class="iq-score" id="iq-score">0</div>
-        <p>تذكر: هذا مجرد اختبار محاكاة ترفيهي ولا يعبر بدقة عن قدراتك الذهنية الحقيقية.</p>
-        <button onclick="location.reload()">إعادة التجربة</button>
-    </div>
-</div>
-
-<script>
-    const questions = [
-        { q: "ما هو الرقم المفقود في السلسلة: 2، 4، 8، 16، ...؟", options: ["24", "32", "64", "20"], answer: "32", icon: "🔢" },
-        { q: "أي الأشكال التالية لا ينتمي للمجموعة: (مربع، مستطيل، دائرة، متوازي أضلاع)؟", options: ["مربع", "دائرة", "مستطيل", "جميعها تنتمي"], answer: "دائرة", icon: "⭕" },
-        { q: "عكس كلمة 'شجاع' هو...", option: ["قوي", "جبان", "ذكي", "سريع"], answer: "جبان", icon: "🦁" },
-        { q: "إذا كانت الساعة 3:15، فكم تكون الزاوية الحادة بين العقربين؟", options: ["0°", "7.5°", "15°", "30°"], answer: "7.5°", icon: "⏰" },
-        { q: "ترتيب الحروف 'ت ب ك ا ر' يشكل كلمة تعني...", options: ["دولة", "حيوان", "أداة", "نبات"], answer: "حيوان", icon: "🔤" }
-    ];
-
-    let currentQuestion = 0;
-    let score = 0;
-    let userAge = 0;
-
-    function startQuiz() {
-        const ageInput = document.getElementById("age").value;
-        if (!ageInput || ageInput < 10 || ageInput > 99) {
-            alert("يرجى إدخال عمر صحيح.");
-            return;
-        }
-        userAge = parseInt(ageInput);
-        document.getElementById("intro-step").classList.remove("active");
-        document.getElementById("question-step").classList.add("active");
-        showQuestion();
-    }
-
-    function showQuestion() {
-        const qData = questions[currentQuestion];
-        document.getElementById("q-icon").innerText = qData.icon;
-        document.getElementById("q-text").innerText = qData.q;
-        
-        const optionsContainer = document.getElementById("options-container");
-        optionsContainer.innerHTML = "";
-        
-        qData.options.forEach(opt => {
-            const btn = document.createElement("button");
-            btn.className = "option-btn";
-            btn.innerText = opt;
-            btn.onclick = () => selectOption(opt);
-            optionsContainer.appendChild(btn);
-        });
-    }
-
-    function selectOption(selectedOption) {
-        if (selectedOption === questions[currentQuestion].answer) {
-            score++;
-        }
-        currentQuestion++;
-        if (currentQuestion < questions.length) {
-            showQuestion();
-        } else {
-            showResult();
-        }
-    }
-
-    function showResult() {
-        document.getElementById("question-step").classList.remove("active");
-        // معادلة تقديرية بسيطة تعتمد على العمر ونسبة الإجابات الصحيحة
-        const baseIQs = [85, 95, 105, 115, 125, 135];
-        const calculatedIQ = baseIQs[score] + Math.floor((userAge - 25) / 5); 
-        
-        document.getElementById("iq-score").innerText = calculatedIQ;
-        document.getElementById("result-container").style.display = "block";
-    }
-</script>
-
-</body>
-</html>
-
+        <h2>نتيج
