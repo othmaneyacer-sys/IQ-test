@@ -44,13 +44,14 @@
         h1 { color: var(--primary); margin-bottom: 0.5rem; }
         p { color: #64748B; margin-bottom: 2rem; }
 
-        input[type="number"] {
+        input {
             padding: 0.8rem;
             width: 80%;
             border: 2px solid #E2E8F0;
             border-radius: 0.5rem;
             font-size: 1rem;
             margin-bottom: 1.5rem;
+            text-align: center;
         }
 
         button {
@@ -66,8 +67,7 @@
 
         button:hover { transform: scale(1.05); }
 
-        #intro-step { display: none; }
-        .question-step { display: none; }
+        #intro-step, .question-step, #result-container { display: none; }
         
         .active { display: block !important; }
 
@@ -94,7 +94,6 @@
             border-color: var(--secondary);
         }
 
-        #result-container { display: none; }
         .iq-score {
             font-size: 4rem;
             font-weight: bold;
@@ -106,24 +105,124 @@
 <body>
 
 <div id="quiz-container">
-    <!-- المقدمة -->
     <div id="intro-step" class="active">
         <span class="illustration">🤖</span>
         <h1>مُحاكي الذكاء الاصطناعي</h1>
         <p>اختبار منطقي مبسط مستوحى من مقاييس الـ IQ العالمية.</p>
-        <input type="number" id="age" placeholder="أدخل عمرك (بالسنوات)" min="10" max="99">
+        <input type="tel" id="age" placeholder="أدخل عمرك (بالسنوات)">
         <br>
         <button type="button" onclick="startQuiz()">ابدأ الاختبار</button>
     </div>
 
-    <!-- الأسئلة -->
     <div id="question-step" class="question-step">
         <span class="illustration" id="q-icon">❓</span>
         <h2 id="q-text">السؤال</h2>
         <div class="options-grid" id="options-container"></div>
     </div>
 
-    <!-- النتيجة -->
     <div id="result-container">
         <span class="illustration">🎉</span>
-        <h2>نتيج
+        <h2>نتيجتك التقديرية</h2>
+        <div class="iq-score" id="iq-score">0</div>
+        <p>تذكر: هذا مجرد اختبار محاكاة ترفيهي ولا يعبر بدقة عن قدراتك الذهنية الحقيقية.</p>
+        <button type="button" onclick="location.reload()">إعادة التجربة</button>
+    </div>
+</div>
+
+<script>
+    const questions = [
+        { 
+            q: "ما هو الرقم المفقود في السلسلة: 3، 4، 7، 16، 43، ...؟", 
+            options: ["124", "104", "86", "112"], 
+            answer: "124", 
+            icon: "📈" 
+        },
+        { 
+            q: "بعض الأطباء شعراء، وكل الشعراء رسامون. العبارة المؤكدة هي...", 
+            options: ["بعض الرسامين أطباء", "كل الأطباء رسامون", "كل الرسامين شعراء", "لا طبيب رسام"], 
+            answer: "بعض الرسامين أطباء", 
+            icon: "🧠" 
+        },
+        { 
+            q: "عمر أب الآن 3 أضعاف عمر ابنه. قبل 10 سنوات، كان عمر الأب 7 أضعاف عمر ابنه. كم عمر الأب الآن؟", 
+            options: ["45", "60", "50", "42"], 
+            answer: "45", 
+            icon: "⏳" 
+        },
+        { 
+            q: "شخص ينظر للشمال، استدار 90° يميناً، ثم 135° يساراً، ثم 180° يميناً. أين ينظر الآن؟", 
+            options: ["الجنوب الشرقي", "الشمال الشرقي", "الجنوب الغربي", "الشمال الغربي"], 
+            answer: "الجنوب الشرقي", 
+            icon: "🧭" 
+        },
+        { 
+            q: "إذا كان 2+3=10، و 7+2=63، و 8+4=96، فما هو ناتج 6+5 = ؟", 
+            options: ["66", "55", "30", "42"], 
+            answer: "66", 
+            icon: "🧩" 
+        }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+    let userAge = 20;
+
+    function startQuiz() {
+        const ageInput = document.getElementById("age").value;
+        
+        if (ageInput.trim() === "") {
+            alert("يرجى إدخال عمرك للبدء.");
+            return;
+        }
+        
+        userAge = parseInt(ageInput) || 20;
+        
+        document.getElementById("intro-step").classList.remove("active");
+        document.getElementById("question-step").classList.add("active");
+        
+        showQuestion();
+    }
+
+    function showQuestion() {
+        const qData = questions[currentQuestion];
+        document.getElementById("q-icon").innerText = qData.icon;
+        document.getElementById("q-text").innerText = qData.q;
+        
+        const optionsContainer = document.getElementById("options-container");
+        optionsContainer.innerHTML = "";
+        
+        qData.options.forEach(opt => {
+            const btn = document.createElement("button");
+            btn.type = "button";
+            btn.className = "option-btn";
+            btn.innerText = opt;
+            btn.onclick = () => selectOption(opt);
+            optionsContainer.appendChild(btn);
+        });
+    }
+
+    function selectOption(selectedOption) {
+        if (selectedOption === questions[currentQuestion].answer) {
+            score++;
+        }
+        currentQuestion++;
+        if (currentQuestion < questions.length) {
+            showQuestion();
+        } else {
+            showResult();
+        }
+    }
+
+    function showResult() {
+        document.getElementById("question-step").classList.remove("active");
+        
+        const baseIQs = [85, 95, 105, 115, 125, 135];
+        const calculatedIQ = baseIQs[score] + Math.floor((userAge - 25) / 5); 
+        
+        document.getElementById("iq-score").innerText = calculatedIQ;
+        document.getElementById("result-container").style.display = "block";
+    }
+</script>
+
+</body>
+</html>
